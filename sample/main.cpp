@@ -4,7 +4,7 @@
 
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK AboutBox(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK AboutBox(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
 std::string utf8_encode(const std::wstring &wstr);
@@ -15,7 +15,8 @@ void MyDisplayText(HWND, UINT, LPCWSTR,... );
 
 void SocketSend(void);
 //
-HWND hEditPort = NULL, hEditIP = NULL,  hEdit_View = NULL, hButton;
+HWND hEditPort = NULL, hEditIP = NULL, hEdit_View = NULL;
+HWND hButton_Send, hButton_Create;
 HWND hEdit_Send = NULL;
 HWND hwnd; //main window
 //
@@ -43,14 +44,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 	// Create the window.
 	
-	hwnd = CreateWindowEx(
+	hwnd = CreateWindowExW(
 		0,                              // Optional window styles.
 		CLASS_NAME,                     // Window class
 		L"SERVER TCP/IP",				// Window text
 		WS_OVERLAPPEDWINDOW,            // Window style
 
 										// Size and position
-		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+		100, 100, 600, 800,
 
 		NULL,       // Parent window    
 		NULL,       // Menu
@@ -106,8 +107,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			char buf[1024];
 			int ret = recv(sock, buf, 1024, 0);
 			buf[ret] = '\0';
-			wstring wstr_decode = utf8_decode(buf);
-			AppendWindowText(hEdit_View, (LPCWSTR)&wstr_decode);
+			wstring wbuf = utf8_decode(buf);
+			MyDisplayText(hEdit_View, 3, L"Client: ", (LPCWSTR)&wbuf, L"\r\n");
 			break;
 		}
 		case FD_CLOSE:
@@ -124,14 +125,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_DESTROY:
 		PostQuitMessage(0);
-		return 0;
+		break;
 	case WM_CLOSE:
 	{
 		if (MessageBox(hwnd, L"Really quit?", L"Confirmation", MB_ICONEXCLAMATION | MB_OKCANCEL) == IDOK)
 		{
 			DestroyWindow(hwnd);
 		}
-		return 0;
+		break;
 	}
 	case WM_PAINT:
 	{
@@ -153,7 +154,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			PostQuitMessage(0);
 			break;
 		case ID_HELP_ABOUT:
-			DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), hwnd, AboutBox);
+			DialogBoxW(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), hwnd, AboutBox);
 			break;
 		case BTN_CREATE_SERVER:
 		{
@@ -183,23 +184,26 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	}
+	}//end switch
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
-	}//end function
 }
 
 void SocketSend(void)
 {
 	WCHAR wbuf[1024];
+	ZeroMemory(wbuf, sizeof(wbuf));
+	
 	GetWindowTextW(hEdit_Send, wbuf, 1024);
+	MyDisplayText(hEdit_View, 3, L"Server: ", (LPCWSTR)&wbuf, L"\r\n");
 	string buf = utf8_encode(wbuf);
 	SetWindowTextW(hEdit_Send, L"");
 	//DrawMessage(buf, FALSE);
 	if (g_hSockClient)
-		send(g_hSockClient, buf.c_str(), buf.length(), 0);
+		send(g_hSockClient, buf.c_str(), (int)buf.length(), 0);
 }
 
 
-BOOL CALLBACK AboutBox(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK AboutBox(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -227,7 +231,7 @@ void CreateForm(HWND hwnd)
 	hEditIP = CreateWindowW(L"Edit", L"ANYIP", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTERIMAGE, 120, 20, 200, 20, hwnd, NULL, NULL, NULL);
 	CreateWindowW(L"Static", L"Server's Port:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 57, 100, 20, hwnd, NULL, NULL, NULL);
 	hEditPort = CreateWindowW(L"Edit", L"8000", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 120, 57, 100, 20, hwnd, NULL, NULL, NULL);
-	hButton = CreateWindowW(L"Button", L"CREATE SERVER", WS_VISIBLE | WS_CHILD | SS_CENTER, 50, 100, 150, 35, hwnd, (HMENU)BTN_CREATE_SERVER, NULL, NULL);
+	hButton_Create = CreateWindowW(L"Button", L"CREATE SERVER", WS_VISIBLE | WS_CHILD | SS_CENTER, 50, 100, 150, 35, hwnd, (HMENU)BTN_CREATE_SERVER, NULL, NULL);
 	
 	//creat view receive text
 	CreateWindowW(L"Static", L"Received messages:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 150, 200, 20, hwnd, NULL, NULL, NULL);
@@ -236,6 +240,7 @@ void CreateForm(HWND hwnd)
 	CreateWindowW(L"Static", L"Send messages:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 500, 220, 20, hwnd, NULL, NULL, NULL);
 	hEdit_Send=CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | WS_VSCROLL, 20, 550, 300, 150, hwnd, (HMENU)WINDOW_SEND, NULL, NULL);
 	hEdit_Send = GetDlgItem(hwnd, WINDOW_SEND);
+	hButton_Create = CreateWindowW(L"Button", L"SEND", WS_VISIBLE | WS_CHILD | SS_CENTER, 350, 600, 150, 35, hwnd, (HMENU)BTN_SEND, NULL, NULL);
 }
 void AppendWindowText(HWND hwnd, LPCWSTR  lpString)
 {

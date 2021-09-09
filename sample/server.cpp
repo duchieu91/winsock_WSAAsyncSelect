@@ -81,7 +81,7 @@ DWORD WINAPI ClientThread(LPVOID IpParam)
 
 			//printf("\nNhap tin nhan gui Client: "); fgets(hello, sizeof(hello), stdin);
 			//printf("Send at: %s ", rs);
-			ret = send(sock, szBuff, strlen(szBuff), 0);
+			ret = send(sock, szBuff, (int)strlen(szBuff), 0);
 			if (ret == 0)
 				break;
 			else if (ret == SOCKET_ERROR)
@@ -100,9 +100,9 @@ DWORD WINAPI creatServer(LPVOID IpParam)
 {
 	WSADATA  wsd;
 
-	HANDLE   hThread;
-	DWORD    dwThreadId;
-	struct sockaddr_in serverAddr, clientAddr;
+	//HANDLE   hThread;
+	//DWORD    dwThreadId;
+	struct sockaddr_in serverAddr;
 	//time_t now = time(0);
 	//char* dt = ctime(&now);
 	// Load WinSock

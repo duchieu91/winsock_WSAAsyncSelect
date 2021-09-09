@@ -24,7 +24,7 @@ extern SOCKADDR_IN g_AddrClient;
 
 extern HWND hEditPort, hEditIP, hEdit_View;
 extern HWND hEdit_Send;
-
+extern HWND hButton_Send, hButton_Create;
 extern HWND hwnd;
 
 extern void AppendWindowText(HWND hwnd, LPCWSTR  lpString);

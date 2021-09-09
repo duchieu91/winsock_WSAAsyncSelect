@@ -1,0 +1,8 @@
+﻿  main.cpp
+  server.cpp
+  Generating code
+e:\congviec\visualstudioproj\win32api\sample\winsock_wsaasyncselect\sample\main.cpp(189): warning C4715: 'WindowProc': not all control paths return a value
+  All 181 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  sample.vcxproj -> E:\CONGVIEC\VisualStudioProj\win32api\sample\winsock_WSAAsyncSelect\x64\Release\sample.exe
+  sample.vcxproj -> E:\CONGVIEC\VisualStudioProj\win32api\sample\winsock_WSAAsyncSelect\x64\Release\sample.pdb (Full PDB)
