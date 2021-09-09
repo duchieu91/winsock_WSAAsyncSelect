@@ -1,0 +1,9 @@
+﻿  server.cpp
+e:\congviec\visualstudioproj\win32api\sample\sample\server.cpp(103): warning C4101: 'hThread': unreferenced local variable
+e:\congviec\visualstudioproj\win32api\sample\sample\server.cpp(104): warning C4101: 'dwThreadId': unreferenced local variable
+e:\congviec\visualstudioproj\win32api\sample\sample\server.cpp(105): warning C4101: 'clientAddr': unreferenced local variable
+  main.cpp
+  Generating Code...
+e:\congviec\visualstudioproj\win32api\sample\sample\main.cpp(187): warning C4715: 'WindowProc': not all control paths return a value
+  sample.vcxproj -> E:\CONGVIEC\VisualStudioProj\win32api\sample\Debug\sample.exe
+  sample.vcxproj -> E:\CONGVIEC\VisualStudioProj\win32api\sample\Debug\sample.pdb (Full PDB)
