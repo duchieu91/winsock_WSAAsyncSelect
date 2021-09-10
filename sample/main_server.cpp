@@ -19,6 +19,8 @@ HWND hEditPort = NULL, hEditIP = NULL, hEdit_View = NULL;
 HWND hButton_Send, hButton_Create;
 HWND hEdit_Send = NULL;
 HWND hwnd; //main window
+
+HFONT	g_hFont;
 //
 SOCKET g_hSockServer;
 SOCKET g_hSockClient;
@@ -232,6 +234,14 @@ LRESULT CALLBACK AboutBox(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 void CreateForm(HWND hwnd)
 {
+	g_hFont = CreateFontW(18, 0, GM_COMPATIBLE, 0, FW_MEDIUM, 0, 0, 0,
+		ANSI_CHARSET,
+		OUT_DEFAULT_PRECIS,
+		CLIP_DEFAULT_PRECIS,
+		DEFAULT_QUALITY,
+		FF_DONTCARE,
+		L"Helvetica");
+
 	CreateWindowW(L"Static", L"Server's IP:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 20, 100, 20, hwnd, NULL, NULL, NULL);
 	hEditIP = CreateWindowW(L"Edit", L"ANYIP", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTERIMAGE, 120, 20, 200, 20, hwnd, NULL, NULL, NULL);
 	CreateWindowW(L"Static", L"Server's Port:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 57, 100, 20, hwnd, NULL, NULL, NULL);
@@ -245,7 +255,14 @@ void CreateForm(HWND hwnd)
 	CreateWindowW(L"Static", L"Send messages:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 500, 220, 20, hwnd, NULL, NULL, NULL);
 	hEdit_Send=CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | WS_VSCROLL, 20, 550, 300, 150, hwnd, (HMENU)WINDOW_SEND, NULL, NULL);
 	hEdit_Send = GetDlgItem(hwnd, WINDOW_SEND);
-	hButton_Create = CreateWindowW(L"Button", L"SEND", WS_VISIBLE | WS_CHILD | SS_CENTER, 350, 600, 150, 35, hwnd, (HMENU)BTN_SEND, NULL, NULL);
+	hButton_Send = CreateWindowW(L"Button", L"SEND", WS_VISIBLE | WS_CHILD | SS_CENTER, 350, 600, 150, 35, hwnd, (HMENU)BTN_SEND, NULL, NULL);
+
+	//change font 
+	SendMessage(hEdit_Send, WM_SETFONT, (WPARAM)g_hFont, 0);
+	SendMessage(hButton_Send, WM_SETFONT, (WPARAM)g_hFont, 0);
+
+	SendMessage(hEdit_View, WM_SETFONT, (WPARAM)g_hFont, 0);
+	SendMessage(hButton_Create, WM_SETFONT, (WPARAM)g_hFont, 0);
 }
 void AppendWindowText(HWND hwnd, LPCWSTR  lpString)
 {

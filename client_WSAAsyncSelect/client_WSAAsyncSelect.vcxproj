@@ -147,9 +147,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main_client.cpp" />
+    <ClCompile Include="richEdit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_client.h" />
+    <ClInclude Include="richEdit.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

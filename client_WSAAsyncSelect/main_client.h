@@ -17,6 +17,9 @@
 #include <stdarg.h>
 #include <iostream> 
 #include <cstring>
+#include <commctrl.h>
+#include "richEdit.h"
+
 using namespace std;
 
 #define BTN_CONNECT				1001

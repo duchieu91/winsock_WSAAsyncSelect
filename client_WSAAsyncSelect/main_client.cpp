@@ -12,7 +12,7 @@ std::wstring utf8_decode(const std::string &str);
 void CreateForm(HWND hwnd);
 void AppendWindowText(HWND hwnd, LPCWSTR  lpString);
 void MyDisplayText(HWND, UINT, LPCWSTR, ...);
-
+void MyDisplayTextColor(HWND hwnd, COLORREF color, UINT num, LPCWSTR lpString, ...);
 void CreateClient(void);
 void SocketSend(void);
 //
@@ -31,6 +31,7 @@ SOCKADDR_IN g_AddrClient;
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
+	LoadLibraryW(L"riched20.dll"); // for using rich edit
 	// Register the window class.
 	const wchar_t CLASS_NAME[] = L"Main window";
 
@@ -109,6 +110,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			wstring wbuf = utf8_decode(buf);
 			wbuf_view = wbuf.c_str();
 			MyDisplayText(hEdit_View, 3, L"Server: ", wbuf_view, L"\r\n");
+			//MyDisplayTextColor(hEdit_View, RGB(255,0,0), 3, L"Server: ", wbuf_view, L"\r\n");
 			break;
 		}
 		case FD_CLOSE:
@@ -192,7 +194,7 @@ void CreateClient(void)
 	//
 	AppendWindowText(hEdit_View, L"Client is created! \r\n");
 	connect(g_hSockServer, (SOCKADDR *) &hint, sizeof(hint));
-	MyDisplayText(hEdit_View, 2, L" Ready for chat!!! ", L"\r\n");
+	MyDisplayText(hEdit_View, 2, L"Ready for chat!!! ", L"\r\n");
 	WSAAsyncSelect(g_hSockServer, hwnd, WM_SOCKET, FD_READ | FD_CLOSE);
 }
 
@@ -215,13 +217,13 @@ void SocketSend(void)
 
 void CreateForm(HWND hwnd)
 {
-	g_hFont = CreateFontW(18,0,GM_COMPATIBLE,0,FW_NORMAL,0,0,0,
+	g_hFont = CreateFontW(18, 0, GM_COMPATIBLE, 0, FW_MEDIUM, 0, 0, 0,
 		ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS,
 		CLIP_DEFAULT_PRECIS,
 		DEFAULT_QUALITY,
 		FF_DONTCARE,
-		L"times new roman");
+		L"Helvetica");
 	
 
 	CreateWindowW(L"Static", L"Client's IP:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 20, 100, 20, hwnd, NULL, NULL, NULL);
@@ -234,13 +236,15 @@ void CreateForm(HWND hwnd)
 	CreateWindowW(L"Static", L"Received messages:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 150, 200, 20, hwnd, NULL, NULL, NULL);
 	hEdit_View = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | WS_VSCROLL, 20, 190, 500, 300, hwnd, NULL, NULL, NULL);
 
+	//hEdit_View = CreateWindow(RICHEDIT_CLASS, L"", WS_CHILD | ES_SAVESEL | ES_NOHIDESEL | WS_CHILDWINDOW | WS_BORDER | WS_VISIBLE | ES_MULTILINE | WS_VSCROLL | WS_EX_STATICEDGE, 20, 190, 500, 300, hwnd, 0, GetModuleHandle(0), 0);
+
 	CreateWindowW(L"Static", L"Send messages:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 500, 220, 20, hwnd, NULL, NULL, NULL);
 	hEdit_Send = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | WS_VSCROLL, 20, 550, 300, 150, hwnd, (HMENU)WINDOW_SEND, NULL, NULL);
 	hEdit_Send = GetDlgItem(hwnd, WINDOW_SEND);
 	hButton_Send = CreateWindowW(L"Button", L"SEND", WS_VISIBLE | WS_CHILD | SS_CENTER, 350, 600, 150, 35, hwnd, (HMENU)BTN_SEND, NULL, NULL);
 
-	g_hdcEdit = GetDC(hEdit_View);
-	SetTextColor(g_hdcEdit, RGB(255, 0, 0));
+	//g_hdcEdit = GetDC(hEdit_View);
+	//SetTextColor(g_hdcEdit, RGB(255, 0, 0));
 	SendMessage(hEdit_Send, WM_SETFONT, (WPARAM)g_hFont, 0);
 	SendMessage(hButton_Send, WM_SETFONT, (WPARAM)g_hFont, 0);
 
@@ -273,6 +277,29 @@ void MyDisplayText(HWND hwnd, UINT num, LPCWSTR lpString, ...)
 	{
 		temp = va_arg(valist, LPCWSTR);
 		AppendWindowText(hwnd, temp);
+
+	}
+	/* clean memory reserved for valist */
+	va_end(valist);
+
+	//AppendWindowText(hwnd, out);
+}
+void MyDisplayTextColor(HWND hwnd, COLORREF color, UINT num, LPCWSTR lpString, ...)
+{
+	//
+	va_list valist;
+	LPCWSTR temp;
+	//WCHAR out[100];
+	int len = 0;
+
+	/* initialize valist for num number of arguments */
+	va_start(valist, num);
+
+	/* access all the arguments assigned to valist */
+	for (UINT i = 0; i < num; i++)
+	{
+		temp = va_arg(valist, LPCWSTR);
+		rich_edit::append(hwnd,color, temp);
 
 	}
 	/* clean memory reserved for valist */
