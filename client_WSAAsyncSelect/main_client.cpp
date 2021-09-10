@@ -20,6 +20,9 @@ HWND hEditPort = NULL, hEditIP = NULL, hEdit_View = NULL;
 HWND hButton_Send, hButton_Connect;
 HWND hEdit_Send = NULL;
 HWND hwnd; //main window
+
+HFONT	g_hFont;
+HDC		g_hdcEdit;
 		   //
 SOCKET g_hSockServer;
 SOCKET g_hSockClient;
@@ -183,7 +186,7 @@ void CreateClient(void)
 	hint.sin_addr.s_addr = inet_addr("127.0.0.1");
 	 // need to bind lient_socket, for server side connect with this port
 	client.sin_family = AF_INET;
-	client.sin_port = htons(54010);
+	client.sin_port = htons(54000);
 	client.sin_addr.s_addr = INADDR_ANY;
 	bind(g_hSockServer, (SOCKADDR *)&client, sizeof(client));
 	//
@@ -212,6 +215,15 @@ void SocketSend(void)
 
 void CreateForm(HWND hwnd)
 {
+	g_hFont = CreateFontW(18,0,GM_COMPATIBLE,0,FW_NORMAL,0,0,0,
+		ANSI_CHARSET,
+		OUT_DEFAULT_PRECIS,
+		CLIP_DEFAULT_PRECIS,
+		DEFAULT_QUALITY,
+		FF_DONTCARE,
+		L"times new roman");
+	
+
 	CreateWindowW(L"Static", L"Client's IP:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 20, 100, 20, hwnd, NULL, NULL, NULL);
 	hEditIP = CreateWindowW(L"Edit", L"ANYIP", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTERIMAGE, 120, 20, 200, 20, hwnd, NULL, NULL, NULL);
 	CreateWindowW(L"Static", L"Client's Port:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 57, 100, 20, hwnd, NULL, NULL, NULL);
@@ -226,6 +238,16 @@ void CreateForm(HWND hwnd)
 	hEdit_Send = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | WS_VSCROLL, 20, 550, 300, 150, hwnd, (HMENU)WINDOW_SEND, NULL, NULL);
 	hEdit_Send = GetDlgItem(hwnd, WINDOW_SEND);
 	hButton_Send = CreateWindowW(L"Button", L"SEND", WS_VISIBLE | WS_CHILD | SS_CENTER, 350, 600, 150, 35, hwnd, (HMENU)BTN_SEND, NULL, NULL);
+
+	g_hdcEdit = GetDC(hEdit_View);
+	SetTextColor(g_hdcEdit, RGB(255, 0, 0));
+	SendMessage(hEdit_Send, WM_SETFONT, (WPARAM)g_hFont, 0);
+	SendMessage(hButton_Send, WM_SETFONT, (WPARAM)g_hFont, 0);
+
+	SendMessage(hEdit_View, WM_SETFONT, (WPARAM)g_hFont, 0);
+	SendMessage(hButton_Connect, WM_SETFONT, (WPARAM)g_hFont, 0);
+	
+	
 }
 void AppendWindowText(HWND hwnd, LPCWSTR  lpString)
 {
