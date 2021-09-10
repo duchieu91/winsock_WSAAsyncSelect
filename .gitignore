@@ -1,2 +1,4 @@
 
 *.opendb
+*.db
+.vs/win32_tcpip/v14/.suo
