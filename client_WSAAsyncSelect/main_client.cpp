@@ -52,7 +52,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		WS_OVERLAPPEDWINDOW,            // Window style
 
 										// Size and position
-		100, 100, 600, 800,
+		700, 100, 600, 800,
 
 		NULL,       // Parent window    
 		NULL,       // Menu
@@ -176,11 +176,17 @@ void CreateClient(void)
 {
 	WSADATA wsaData = { 0 };
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
-	SOCKADDR_IN hint;
+	SOCKADDR_IN hint, client;
 	g_hSockServer = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(54000);
 	hint.sin_addr.s_addr = inet_addr("127.0.0.1");
+	 // need to bind lient_socket, for server side connect with this port
+	client.sin_family = AF_INET;
+	client.sin_port = htons(54010);
+	client.sin_addr.s_addr = INADDR_ANY;
+	bind(g_hSockServer, (SOCKADDR *)&client, sizeof(client));
+	//
 	AppendWindowText(hEdit_View, L"Client is created! \r\n");
 	connect(g_hSockServer, (SOCKADDR *) &hint, sizeof(hint));
 	MyDisplayText(hEdit_View, 2, L" Ready for chat!!! ", L"\r\n");

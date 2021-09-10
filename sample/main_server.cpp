@@ -249,10 +249,15 @@ void CreateForm(HWND hwnd)
 }
 void AppendWindowText(HWND hwnd, LPCWSTR  lpString)
 {
+
+	HDC hdc = GetDC(hwnd);
+	//SetDCPenColor(hdc, RGB(0, 0, 255)); //set to blue
+	SetTextColor(hdc, RGB(0, 0, 255));
 	int iLength = GetWindowTextLength(hwnd);
 	SendMessage(hwnd, EM_SETSEL, iLength, iLength);
 	SendMessage(hwnd, EM_REPLACESEL, 0, (LPARAM)lpString);
 	SendMessage(hwnd, WM_VSCROLL, SB_BOTTOM, (LPARAM)NULL);
+
 }
 
 void MyDisplayText(HWND hwnd, UINT num, LPCWSTR lpString, ...)
