@@ -135,6 +135,7 @@ DWORD WINAPI creatServer(LPVOID IpParam)
 	} else AppendWindowText(hEdit_View, L"Server is binded. \r\n");
 
 	listen(g_hSockServer, 8);
+
 	WSAAsyncSelect(g_hSockServer, hwnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
 	//printf("Server Listening...on IP %s and Port %d\n", inet_ntoa(server.sin_addr), ntohs(server.sin_port));
 	AppendWindowText(hEdit_View, L"Server is waitting for connection... \r\n");

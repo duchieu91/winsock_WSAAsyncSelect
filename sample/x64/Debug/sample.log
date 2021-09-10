@@ -1,3 +1,4 @@
-﻿  main.cpp
-  sample.vcxproj -> E:\CONGVIEC\VisualStudioProj\win32api\sample\winsock_WSAAsyncSelect\x64\Debug\sample.exe
-  sample.vcxproj -> E:\CONGVIEC\VisualStudioProj\win32api\sample\winsock_WSAAsyncSelect\x64\Debug\sample.pdb (Full PDB)
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (sample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  main_server.cpp
+  sample.vcxproj -> E:\CONGVIEC\VisualStudioProj\win32api\sample\winsock_WSAAsyncSelect\x64\Debug\server_WSAAsyncSelect.exe
+  sample.vcxproj -> E:\CONGVIEC\VisualStudioProj\win32api\sample\winsock_WSAAsyncSelect\x64\Debug\server_WSAAsyncSelect.pdb (Full PDB)

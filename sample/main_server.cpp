@@ -105,10 +105,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case FD_READ:
 		{
 			char buf[1024];
+			LPCWSTR wbuf_view = NULL;
+			ZeroMemory(buf, 1024);
 			int ret = recv(sock, buf, 1024, 0);
 			buf[ret] = '\0';
 			wstring wbuf = utf8_decode(buf);
-			MyDisplayText(hEdit_View, 3, L"Client: ", (LPCWSTR)&wbuf, L"\r\n");
+			wbuf_view = wbuf.c_str();
+			MyDisplayText(hEdit_View, 3, L"Client: ", wbuf_view, L"\r\n");
 			break;
 		}
 		case FD_CLOSE:
@@ -124,7 +127,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 	}
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		//PostQuitMessage(0);
 		break;
 	case WM_CLOSE:
 	{
@@ -191,15 +194,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 void SocketSend(void)
 {
 	WCHAR wbuf[1024];
+	char *buf_send = NULL;
 	ZeroMemory(wbuf, sizeof(wbuf));
 	
 	GetWindowTextW(hEdit_Send, wbuf, 1024);
 	MyDisplayText(hEdit_View, 3, L"Server: ", (LPCWSTR)&wbuf, L"\r\n");
 	string buf = utf8_encode(wbuf);
+	buf_send = (char *)buf.c_str();
 	SetWindowTextW(hEdit_Send, L"");
 	//DrawMessage(buf, FALSE);
 	if (g_hSockClient)
-		send(g_hSockClient, buf.c_str(), (int)buf.length(), 0);
+		send(g_hSockClient, buf_send, (int)buf.length(), 0);
 }
 
 
@@ -230,7 +235,7 @@ void CreateForm(HWND hwnd)
 	CreateWindowW(L"Static", L"Server's IP:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 20, 100, 20, hwnd, NULL, NULL, NULL);
 	hEditIP = CreateWindowW(L"Edit", L"ANYIP", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTERIMAGE, 120, 20, 200, 20, hwnd, NULL, NULL, NULL);
 	CreateWindowW(L"Static", L"Server's Port:", WS_VISIBLE | WS_CHILD | SS_LEFT | SS_CENTERIMAGE, 20, 57, 100, 20, hwnd, NULL, NULL, NULL);
-	hEditPort = CreateWindowW(L"Edit", L"8000", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 120, 57, 100, 20, hwnd, NULL, NULL, NULL);
+	hEditPort = CreateWindowW(L"Edit", L"54000", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER, 120, 57, 100, 20, hwnd, NULL, NULL, NULL);
 	hButton_Create = CreateWindowW(L"Button", L"CREATE SERVER", WS_VISIBLE | WS_CHILD | SS_CENTER, 50, 100, 150, 35, hwnd, (HMENU)BTN_CREATE_SERVER, NULL, NULL);
 	
 	//creat view receive text
